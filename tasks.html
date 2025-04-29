@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Task Tracker</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+  </style>
+</head>
+<body class="bg-gray-900 text-gray-100 min-h-screen flex flex-col">
+  <header class="bg-gray-800 shadow-md sticky top-0 z-50">
+    <div class="container mx-auto flex justify-between items-center p-4">
+      <h1 class="text-2xl font-bold">Task Tracker</h1>
+      <nav>
+        <ul class="flex space-x-6 text-gray-300">
+          <li><a href="index.html" class="hover:text-white transition">Portfolio</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container mx-auto px-4 py-12 flex-grow">
+    <section class="max-w-4xl mx-auto">
+      <h2 class="text-3xl font-bold mb-8 text-center">Track Your Tasks Efficiently</h2>
+      <div class="bg-gray-800 rounded-lg shadow-lg p-6">
+        <form id="task-form" class="flex space-x-4 mb-6" aria-label="Add new task">
+          <input
+            type="text"
+            id="task-input"
+            placeholder="Enter a new task"
+            aria-label="Task description"
+            required
+            class="flex-grow p-3 rounded bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-cyan-400 text-gray-100"
+          />
+          <button
+            type="submit"
+            class="bg-cyan-500 hover:bg-cyan-600 text-white font-semibold px-6 rounded transition"
+            aria-label="Add task"
+          >
+            Add
+          </button>
+        </form>
+        <ul id="task-list" class="space-y-4" aria-live="polite" aria-relevant="additions removals">
+          <!-- Tasks will be dynamically added here -->
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <footer class="bg-gray-800 text-gray-400 text-center py-6 mt-12">
+    <p class="text-sm">&copy; 2024 Task Tracker App. All rights reserved.</p>
+  </footer>
+
+  <script>
+    // Task Tracker JavaScript
+    document.addEventListener('DOMContentLoaded', () => {
+      const taskForm = document.getElementById('task-form');
+      const taskInput = document.getElementById('task-input');
+      const taskList = document.getElementById('task-list');
+
+      // Load tasks from localStorage
+      let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+
+      function saveTasks() {
+        localStorage.setItem('tasks', JSON.stringify(tasks));
+      }
+
+      function renderTasks() {
+        taskList.innerHTML = '';
+        tasks.forEach((task, index) => {
+          const li = document.createElement('li');
+          li.className = 'flex items-center justify-between bg-gray-700 p-3 rounded';
+
+          const label = document.createElement('label');
+          label.className = 'flex items-center space-x-3 cursor-pointer';
+          label.htmlFor = `task-${index}`;
+
+          const checkbox = document.createElement('input');
+          checkbox.type = 'checkbox';
+          checkbox.id = `task-${index}`;
+          checkbox.checked = task.completed;
+          checkbox.className = 'form-checkbox h-5 w-5 text-cyan-400';
+          checkbox.addEventListener('change', () => {
+            tasks[index].completed = checkbox.checked;
+            saveTasks();
+            renderTasks();
+          });
+
+          const span = document.createElement('span');
+          span.textContent = task.text;
+          span.className = task.completed ? 'line-through text-gray-400' : 'text-gray-100';
+
+          label.appendChild(checkbox);
+          label.appendChild(span);
+
+          const deleteBtn = document.createElement('button');
+          deleteBtn.className = 'text-red-500 hover:text-red-600 focus:outline-none';
+          deleteBtn.setAttribute('aria-label', `Delete task: ${task.text}`);
+          deleteBtn.innerHTML = '<i class="fas fa-trash-alt"></i>';
+          deleteBtn.addEventListener('click', () => {
+            tasks.splice(index, 1);
+            saveTasks();
+            renderTasks();
+          });
+
+          li.appendChild(label);
+          li.appendChild(deleteBtn);
+
+          taskList.appendChild(li);
+        });
+      }
+
+      taskForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const text = taskInput.value.trim();
+        if (text) {
+          tasks.push({ text, completed: false });
+          saveTasks();
+          renderTasks();
+          taskInput.value = '';
+          taskInput.focus();
+        }
+      });
+
+      renderTasks();
+    });
+  </script>
+</body>
+</html>

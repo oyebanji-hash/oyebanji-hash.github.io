@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Stock Price Predictor</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+  </style>
+</head>
+<body class="bg-gray-900 text-gray-100 min-h-screen flex flex-col">
+  <header class="bg-gray-800 shadow-md sticky top-0 z-50">
+    <div class="container mx-auto flex justify-between items-center p-4">
+      <h1 class="text-2xl font-bold">Stock Price Predictor</h1>
+      <nav>
+        <ul class="flex space-x-6 text-gray-300">
+          <li><a href="index.html" class="hover:text-white transition">Portfolio</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container mx-auto px-4 py-12 flex-grow">
+    <section class="max-w-3xl mx-auto">
+      <h2 class="text-3xl font-bold mb-8 text-center">Predict Stock Prices</h2>
+      <form id="predict-form" class="space-y-6 bg-gray-800 rounded-lg p-6 shadow-lg">
+        <div>
+          <label for="stock-symbol" class="block mb-2 font-semibold">Stock Symbol</label>
+          <input
+            type="text"
+            id="stock-symbol"
+            placeholder="e.g. AAPL"
+            required
+            class="w-full p-3 rounded bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-cyan-400 text-gray-100"
+          />
+        </div>
+        <div>
+          <label for="days" class="block mb-2 font-semibold">Days to Predict</label>
+          <input
+            type="number"
+            id="days"
+            min="1"
+            max="30"
+            value="5"
+            required
+            class="w-full p-3 rounded bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-cyan-400 text-gray-100"
+          />
+        </div>
+        <button
+          type="submit"
+          class="w-full bg-cyan-500 hover:bg-cyan-600 text-white font-semibold py-3 rounded transition"
+        >
+          Predict
+        </button>
+      </form>
+      <div id="result" class="mt-8 text-center text-lg"></div>
+    </section>
+  </main>
+
+  <footer class="bg-gray-800 text-gray-400 text-center py-6 mt-12">
+    <p class="text-sm">&copy; 2024 Stock Price Predictor. All rights reserved.</p>
+  </footer>
+
+  <script>
+    // Simple mock prediction logic
+    document.getElementById('predict-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const symbol = document.getElementById('stock-symbol').value.trim().toUpperCase();
+      const days = parseInt(document.getElementById('days').value, 10);
+      const resultDiv = document.getElementById('result');
+
+      if (!symbol || days < 1 || days > 30) {
+        resultDiv.textContent = 'Please enter a valid stock symbol and days (1-30).';
+        return;
+      }
+
+      // Mock prediction: generate random prices around a base price
+      const basePrice = 100 + Math.random() * 100;
+      let predictions = [];
+      for (let i = 1; i <= days; i++) {
+        const change = (Math.random() - 0.5) * 10;
+        const price = (basePrice + change).toFixed(2);
+        predictions.push(`Day ${i}: $${price}`);
+      }
+
+      resultDiv.innerHTML = `<h3 class="text-xl font-semibold mb-4">Predicted prices for ${symbol}:</h3><ul class="list-disc list-inside">${predictions.map(p => `<li>${p}</li>`).join('')}</ul>`;
+    });
+  </script>
+</body>
+</html>
